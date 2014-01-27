@@ -50,7 +50,38 @@ public class Serializer {
             
             System.out.println("Response" + sb);
         } catch (IOException e) {
-            System.out.println("Failed to deserialize data" + " : readJsonObjectFromURL");
+            System.out.println("Failed to deserialize data" + " : installFlow");
+            e.printStackTrace();
+        }
+    }
+    
+    public static void deleteFlow(final String surl, final String flowname) {
+        try {
+            URL url = new URL(surl);
+            HttpURLConnection connection = null;
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+            connection.setUseCaches(false);
+           
+            OutputStream stream = connection.getOutputStream();
+            stream.write(flowname.getBytes());
+            stream.close();
+            
+            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            StringBuffer sb = new StringBuffer();
+            String str = br.readLine();
+            
+            while(str!=null) {
+                sb.append(str);
+                str = br.readLine();
+            }
+            
+            System.out.println("Response" + sb);
+        } catch (IOException e) {
+            System.out.println("Failed to deserialize data" + " : deleteFlow");
             e.printStackTrace();
         }
     }
