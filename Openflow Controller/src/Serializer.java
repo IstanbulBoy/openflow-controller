@@ -34,8 +34,7 @@ public class Serializer {
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setUseCaches(false);
-
-            
+           
             OutputStream stream = connection.getOutputStream();
             stream.write(flow.getBytes());
             stream.close();

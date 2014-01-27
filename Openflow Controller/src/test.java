@@ -40,7 +40,6 @@ public class test {
         Switches = Deserializer.readJsonArrayFromURL("http://" + IP
 				+ ":" + PORT + "/wm/core/controller/switches/json");
         
-      
         // Se imprimen los resultados
         System.out.println(Health);
         System.out.println(Memory);
@@ -77,11 +76,7 @@ public class test {
 				+ ":" + PORT + "/wm/staticflowentrypusher/json", flow1);
         Serializer.installFlow("http://" + IP
 				+ ":" + PORT + "/wm/staticflowentrypusher/json", flow2);
-        
-       
-        
-        
-        
+         
         //System.out.println(flow1);
         //System.out.println(flow2);
     }
