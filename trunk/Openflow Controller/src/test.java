@@ -22,7 +22,7 @@ import org.json.JSONStringer;
  */
 public class test {
     public static void main(String[] args) throws JSONException {
-        String IP = "10.0.0.238";
+        String IP = "10.0.0.79";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -41,12 +41,12 @@ public class test {
 				+ ":" + PORT + "/wm/core/controller/switches/json");
         
         // Se imprimen los resultados
-        System.out.println(Health);
-        System.out.println(Memory);
-        System.out.println(Modules);
+        //System.out.println(Health);
+        //System.out.println(Memory);
+        //System.out.println(Modules);
         System.out.println(Switches);
-        System.out.println("");
-        System.out.println(Health.get("healthy"));
+        //System.out.println("");
+        //System.out.println(Health.get("healthy"));
         
         // FLOW SET UP. 
         // Primero se crean los objetos JSON para configurar los flujos.
@@ -72,12 +72,21 @@ public class test {
                 .key("actions").value("output=1")
                 .endObject().toString();
         
-        Serializer.installFlow("http://" + IP
-				+ ":" + PORT + "/wm/staticflowentrypusher/json", flow1);
-        Serializer.installFlow("http://" + IP
-				+ ":" + PORT + "/wm/staticflowentrypusher/json", flow2);
+        //Serializer.installFlow("http://" + IP
+	//			+ ":" + PORT + "/wm/staticflowentrypusher/json/store", flow1);
+        //Serializer.installFlow("http://" + IP
+	//			+ ":" + PORT + "/wm/staticflowentrypusher/json", flow2);
          
         //System.out.println(flow1);
         //System.out.println(flow2);
+        
+        // DELETE FLOW TEST
+        String flowname = new JSONStringer().object()
+                .key("name").value("flow-mod-1")
+                .endObject().toString();
+        
+        System.out.println("Deleting flow1");
+        Serializer.deleteFlow("http://" + IP
+				+ ":" + PORT + "/wm/staticflowentrypusher/json/delete", flowname);
     }
 }
