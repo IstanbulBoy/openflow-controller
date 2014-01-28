@@ -1,3 +1,6 @@
+package util;
+
+import floodlightprovider.FloodlightProvider;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -24,7 +27,12 @@ import java.net.URL;
  */
 public class Serializer {
   
-    public static void installFlow(final String surl, final String flow) {
+    public static void installFlow(final String flow) {
+        String IP = FloodlightProvider.getIP(), 
+               PORT = FloodlightProvider.getPort(),
+               LINK = FloodlightProvider.getStoreLink(),
+               surl = "http://" + IP + ":" + PORT + LINK;
+        
         try {
             URL url = new URL(surl);
             HttpURLConnection connection = null;
@@ -55,7 +63,12 @@ public class Serializer {
         }
     }
     
-    public static void deleteFlow(final String surl, final String flowname) {
+    public static void deleteFlow(final String flowname) {
+        String IP = FloodlightProvider.getIP(), 
+               PORT = FloodlightProvider.getPort(),
+               LINK = FloodlightProvider.getDeleteLink(),
+               surl = "http://" + IP + ":" + PORT + LINK;
+        
         try {
             URL url = new URL(surl);
             HttpURLConnection connection = null;
