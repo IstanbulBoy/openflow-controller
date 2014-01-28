@@ -1,7 +1,12 @@
+package test;
+
+import util.Deserializer;
+import floodlightprovider.FloodlightProvider;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONStringer;
+import util.Serializer;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -22,7 +27,7 @@ import org.json.JSONStringer;
  */
 public class test {
     public static void main(String[] args) throws JSONException {
-        String IP = "10.0.0.79";
+        String IP = "10.0.0.6";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -39,15 +44,7 @@ public class test {
 				+ ":" + PORT + "/wm/core/module/loaded/json");
         Switches = Deserializer.readJsonArrayFromURL("http://" + IP
 				+ ":" + PORT + "/wm/core/controller/switches/json");
-        
-        // Se imprimen los resultados
-        //System.out.println(Health);
-        //System.out.println(Memory);
-        //System.out.println(Modules);
-        System.out.println(Switches);
-        //System.out.println("");
-        //System.out.println(Health.get("healthy"));
-        
+             
         // FLOW SET UP. 
         // Primero se crean los objetos JSON para configurar los flujos.
         // Luego se convierten en String.
@@ -72,21 +69,18 @@ public class test {
                 .key("actions").value("output=1")
                 .endObject().toString();
         
-        //Serializer.installFlow("http://" + IP
-	//			+ ":" + PORT + "/wm/staticflowentrypusher/json/store", flow1);
-        //Serializer.installFlow("http://" + IP
-	//			+ ":" + PORT + "/wm/staticflowentrypusher/json", flow2);
-         
-        //System.out.println(flow1);
-        //System.out.println(flow2);
-        
+        //Serializer.installFlow(flow1);
+        //Serializer.installFlow(flow2);
+             
         // DELETE FLOW TEST
-        String flowname = new JSONStringer().object()
+        String flowname1 = new JSONStringer().object()
                 .key("name").value("flow-mod-1")
                 .endObject().toString();
+        String flowname2 = new JSONStringer().object()
+                .key("name").value("flow-mod-2")
+                .endObject().toString();
         
-        System.out.println("Deleting flow1");
-        Serializer.deleteFlow("http://" + IP
-				+ ":" + PORT + "/wm/staticflowentrypusher/json/delete", flowname);
+        Serializer.deleteFlow(flowname1);
+        Serializer.deleteFlow(flowname2);
     }
 }

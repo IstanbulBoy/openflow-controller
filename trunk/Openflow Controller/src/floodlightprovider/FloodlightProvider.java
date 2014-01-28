@@ -1,3 +1,5 @@
+package floodlightprovider;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -16,7 +18,9 @@
  */
 
 public class FloodlightProvider {
-    private static String IP, PORT = "8080";
+    private static String IP, PORT = "8080", 
+            STORELINK = "/wm/staticflowentrypusher/json/store",
+            DELETELINK = "/wm/staticflowentrypusher/json/delete";
     
     public static String getIP(){
         return IP;
@@ -32,5 +36,21 @@ public class FloodlightProvider {
     
     public static void setPort(String ControllerPort){
     	PORT = ControllerPort;
+    }
+    
+    public static void setStoreLink(String StoreURL) {
+        STORELINK = StoreURL;
+    }
+    
+    public static String getStoreLink() {
+        return STORELINK;
+    }
+    
+    public static void setDeleteLink(String StoreURL) {
+        STORELINK = StoreURL;
+    }
+    
+    public static String getDeleteLink() {
+        return DELETELINK;
     }
 }
