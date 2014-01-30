@@ -2,6 +2,9 @@ package test;
 
 import util.Deserializer;
 import floodlightprovider.FloodlightProvider;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -27,7 +30,7 @@ import util.Serializer;
  */
 public class test {
     public static void main(String[] args) throws JSONException {
-        String IP = "10.0.0.6";
+        String IP = "10.0.0.232";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -44,7 +47,7 @@ public class test {
 				+ ":" + PORT + "/wm/core/module/loaded/json");
         Switches = Deserializer.readJsonArrayFromURL("http://" + IP
 				+ ":" + PORT + "/wm/core/controller/switches/json");
-             
+        
         // FLOW SET UP. 
         // Primero se crean los objetos JSON para configurar los flujos.
         // Luego se convierten en String.
@@ -80,7 +83,43 @@ public class test {
                 .key("name").value("flow-mod-2")
                 .endObject().toString();
         
-        Serializer.deleteFlow(flowname1);
-        Serializer.deleteFlow(flowname2);
+        //Serializer.deleteFlow(flowname1);
+        //Serializer.deleteFlow(flowname2);
+        //System.out.println(Switches);
+        System.out.println(Switches.length());
+        //System.out.println(Switches.getJSONObject(0).toString());
+        
+        
+        // LOGICA PARA SACAR LOS OBJETOS JSON DE CADA SWITCH CONECTADO A FLOODLIGHT
+        // DE ACUERDO A LA LONGITUD DEL ARREGLO DE SWITCHES SE SACAN EL NUMERO DE SWITCHES
+        // QUEDA PENDIENTE HACER LA LOGICA PARA SACAR LAS VARIABLES DE CADA SWITCH
+        // SE ENTIENDE QUE ESA LOGICA SE DEBE APLICAR DENTRO DEL LOOP FOR
+        String dpid = null;
+        for(int i = 0; i < Switches.length(); i++) {
+            JSONObject sw = Switches.getJSONObject(i);
+            System.out.println(sw);
+            dpid = sw.getString("dpid").toString();
+        }
+
+        // JSON EXTRACK OBJETS TEST
+        //Map<String,String> map = new HashMap<String,String>();
+       // Map<String,String> map = new HashMap<String,String>();
+       // while(iter.hasNext()){
+       //     String key = (String)iter.next();
+        //    String value = Switches.getString(key);
+        //    map.put(key,value);    
+        
+        
+        
+        
+        // test flows summary per switch
+        
+        //JSONObject Summary;
+        
+        
+        //Summary = Deserializer.readJsonObjectFromURL("http://" + IP
+	//			+ ":" + PORT + "/wm/staticflowentrypusher/list/" + dpid + "/json ");
+        //System.out.println(Summary);
+        
     }
 }
