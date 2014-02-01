@@ -30,7 +30,7 @@ import util.Serializer;
  */
 public class test {
     public static void main(String[] args) throws JSONException {
-        String IP = "10.0.0.232";
+        String IP = "10.0.0.235";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -83,10 +83,11 @@ public class test {
                 .key("name").value("flow-mod-2")
                 .endObject().toString();
         
-        //Serializer.deleteFlow(flowname1);
-        //Serializer.deleteFlow(flowname2);
+        Serializer.deleteFlow(flowname1);
+        Serializer.deleteFlow(flowname2);
+        
         //System.out.println(Switches);
-        System.out.println(Switches.length());
+        //System.out.println(Switches.length());
         //System.out.println(Switches.getJSONObject(0).toString());
         
         
@@ -94,11 +95,73 @@ public class test {
         // DE ACUERDO A LA LONGITUD DEL ARREGLO DE SWITCHES SE SACAN EL NUMERO DE SWITCHES
         // QUEDA PENDIENTE HACER LA LOGICA PARA SACAR LAS VARIABLES DE CADA SWITCH
         // SE ENTIENDE QUE ESA LOGICA SE DEBE APLICAR DENTRO DEL LOOP FOR
-        String dpid = null;
+        
+        
         for(int i = 0; i < Switches.length(); i++) {
+            String dpid = null,harole = null,inetAddress = null;
+            int connectedSince,buffers,capabilities,actions;
+            
             JSONObject sw = Switches.getJSONObject(i);
-            System.out.println(sw);
-            dpid = sw.getString("dpid").toString();
+            //System.out.println(sw);
+            
+            dpid = sw.getString("dpid");
+            harole = sw.getString("harole");
+            inetAddress = sw.getString("inetAddress");
+            connectedSince = sw.getInt("connectedSince");
+            buffers = sw.getInt("buffers");
+            capabilities = sw.getInt("capabilities");
+            actions = sw.getInt("actions");
+            
+            
+            System.out.println("Information about switch with DPID: " + dpid);
+            System.out.println("IP Address: " + inetAddress);
+            
+            
+            JSONArray ports = sw.getJSONArray("ports");
+            //System.out.println(ports.length());
+            for(int j = 0; j < ports.length(); j++) {
+                int currentFeatures,portNumber,supportedFeatures,state,config,
+                        advertisedFeatures,peerFeatures;
+                String name = null, hardwareAddress = null;
+                JSONObject port = ports.getJSONObject(j);
+                //System.out.println(port);
+                
+                name = port.getString("name");
+                hardwareAddress = port.getString("hardwareAddress");
+                currentFeatures = port.getInt("currentFeatures");
+                portNumber = port.getInt("portNumber");
+                supportedFeatures = port.getInt("supportedFeatures");
+                state = port.getInt("state");
+                config = port.getInt("config");
+                advertisedFeatures = port.getInt("advertisedFeatures");
+                peerFeatures = port.getInt("peerFeatures");
+                
+                System.out.println("");
+                System.out.println("Name: " + name);
+                System.out.println("MAC: " + hardwareAddress);
+                System.out.println("Port Number: " + portNumber);
+                System.out.println("State: " + state);
+                //System.out.println("");
+            }
+            
+            JSONObject description = sw.getJSONObject("description");
+            String software = null, hardware = null, manufacturer = null,
+                    serialNum = null, datapath = null;
+            
+            software = description.getString("software");
+            hardware = description.getString("hardware");
+            manufacturer = description.getString("manufacturer");
+            serialNum = description.getString("serialNum");
+            datapath = description.getString("datapath");
+            
+            System.out.println("");
+            System.out.println("Software: " + software);
+            System.out.println("Hardware: " + hardware);
+            System.out.println("Manufactuer: " + manufacturer);
+            System.out.println("Serial: " + serialNum);
+            System.out.println("Datapath: " + datapath);
+            System.out.println("");
+            
         }
 
         // JSON EXTRACK OBJETS TEST
