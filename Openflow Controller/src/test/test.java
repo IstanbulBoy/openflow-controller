@@ -32,7 +32,7 @@ import util.Serializer;
  */
 public class test {
     public static void main(String[] args) throws JSONException {
-        String IP = "10.0.0.243";
+        String IP = "192.168.56.101";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -68,17 +68,65 @@ public class test {
         //Serializer.deleteFlow(del2);
         
         // SACAR TODAS LAS VARIABLES DE LOS SWITCHES CONECTADOS
-        //Overview.getSwitches(Switches);
+        Overview.getSwitches(Switches);
 
-        
+       
         // test flows summary per switch
         
-        //JSONObject Summary;
+        JSONObject Summary;
         
         
-        //Summary = Deserializer.readJsonObjectFromURL("http://" + IP
-	//			+ ":" + PORT + "/wm/staticflowentrypusher/list/" + dpid + "/json ");
-        //System.out.println(Summary);
+        Summary = Deserializer.readJsonObjectFromURL("http://" + IP
+				+ ":" + PORT + "/wm/staticflowentrypusher/list/all/json ");
+        
+        //se crea un arreglo con los switches conectados para ser recorrido
+        System.out.println("Lista de switches con flujos: " + Summary.names());
+        JSONArray AS = Summary.names();
+        
+        for(int i=0; i < Summary.length(); i++){
+        //se obtiene el objeto json de los flujos que pertenece a cada switch
+            JSONObject s = Summary.getJSONObject(AS.getString(i));
+        
+        //se crea un arreglo con los nombres de los flujos intalados,para 
+        //ser recorridos en el ciclo.
+            JSONArray arr = s.names();
+            for(int j = 0; j < s.length(); j++){
+                int priority, InputPort, version;
+                
+        //se obtiene el objeto json que tiene las caracteristicas del flujo actual
+                JSONObject t = s.getJSONObject(arr.getString(j));
+                
+                System.out.println("\nCaracteristicas del flujo: " + arr.getString(j));
+                
+                priority = t.getInt("priority");
+                System.out.println("Prioridad: " + priority);
+                
+                //se obtiene el objeto json con los match's de los flujos
+                JSONObject match = t.getJSONObject("match");
+                
+                InputPort = match.getInt("inputPort");
+                System.out.println("Puerto de entrada: " + InputPort);
+                
+                //se obtiene el arreglo json con los action's de los flujos
+                JSONArray action = t.getJSONArray("actions");
+                for(int y = 0; y < action.length(); y++){
+                    int OutputPort;
+                    String accion;
+                    //se obtiene el objeto json con los actions del flujo actual
+                    JSONObject actions = action.getJSONObject(y);
+                    
+                    OutputPort = actions.getInt("port");
+                    accion = actions.getString("type");
+                    
+                    System.out.println("Accion a ejecutar: " + accion);
+                    System.out.println("Puerto a utilizar: " + OutputPort);
+                }
+                
+                version = t.getInt("version");
+                System.out.println("Version: " + version);
+               
+            }
+        }            
         
     }
 }
