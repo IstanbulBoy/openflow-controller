@@ -59,7 +59,7 @@ public class Overview {
             //System.out.println("");     
             
             //dbm.Insert(dpid);
-            dbm.InsertSwitch(dpid,inetAddress,software,hardware,manufacturer,serialNum,datapath,connectedSince);
+            dbm.InsertSwitch(i,dpid,inetAddress,software,hardware,manufacturer,serialNum,datapath,connectedSince);
             
             
             
@@ -81,9 +81,9 @@ public class Overview {
                 //System.out.println("Port Number: " + portNumber);
                 //System.out.println("State: " + state);
                 
-                int index = dbm.getIndex(dpid);
+                //int switchh = dbm.getIndex(dpid);
                 
-                dbm.InsertPort(index,portNumber,name,hardwareAddress,state);
+                dbm.InsertPort(j,i,portNumber,name,hardwareAddress,state);
             }
             
             
@@ -91,7 +91,7 @@ public class Overview {
         }
     }
     
-    public static void getFlows(JSONObject Summary) throws JSONException {
+    public static void getFlows(JSONObject Summary) throws JSONException, SQLException, IOException {
         /* 
          LOGICA PARA SACAR LA LISTA DE SWITCHES QUE CONTIENEN FLUJOS Y LOS FLUJOS
          INSTALADOS EN CADA SWITCH Y SUS VARIABLES PARA LA BASE DE DATOS
@@ -99,7 +99,7 @@ public class Overview {
         */
         
         //se crea un arreglo con los switches conectados para ser recorrido
-        System.out.println("Lista de switches con flujos: " + Summary.names());
+        //System.out.println("Lista de switches con flujos: " + Summary.names());
         JSONArray AS = Summary.names();
         
         for(int i=0; i < Summary.length(); i++){
@@ -115,35 +115,42 @@ public class Overview {
         //se obtiene el objeto json que tiene las caracteristicas del flujo actual
                 JSONObject t = s.getJSONObject(arr.getString(j));
                 
-                System.out.println("\nCaracteristicas del flujo: " + arr.getString(j));
+               //System.out.println("\nCaracteristicas del flujo: " + arr.getString(j));
                 
                 priority = t.getInt("priority");
-                System.out.println("Prioridad: " + priority);
+                //System.out.println("Prioridad: " + priority);
                 
                 //se obtiene el objeto json con los match's de los flujos
                 JSONObject match = t.getJSONObject("match");
                 
                 InputPort = match.getInt("inputPort");
-                System.out.println("Puerto de entrada: " + InputPort);
+                //System.out.println("Puerto de entrada: " + InputPort);
                 
                 //se obtiene el arreglo json con los action's de los flujos
                 JSONArray action = t.getJSONArray("actions");
-                for(int y = 0; y < action.length(); y++){
+                //for(int y = 0; y < action.length(); y++){
                     int OutputPort;
                     String accion;
                     //se obtiene el objeto json con los actions del flujo actual
-                    JSONObject actions = action.getJSONObject(y);
+                    JSONObject actions = action.getJSONObject(0); // BEFORE y
                     
                     OutputPort = actions.getInt("port");
                     accion = actions.getString("type");
                     
-                    System.out.println("Accion a ejecutar: " + accion);
-                    System.out.println("Puerto a utilizar: " + OutputPort);
-                }
-                
-                version = t.getInt("version");
-                System.out.println("Version: " + version);
+                    //System.out.println("Accion a ejecutar: " + accion);
+                    //System.out.println("Puerto a utilizar: " + OutputPort);
+                //}
+                // WE DONT NEED A VERSION
+                //version = t.getInt("version");
+                //System.out.println("Version: " + version);
                
+                System.out.println(AS.getString(i));
+                // NEW CODE
+                DBManager dbm = new DBManager();
+                String sname = arr.getString(j);
+                int switchh = dbm.getIndex(AS.getString(i));
+                //dbm.InsertFlow(i, i, sname, priority, InputPort, sname, OutputPort);
+                dbm.InsertFlow(j,i,sname,priority,InputPort,accion,OutputPort);
             }
         } 
     }
