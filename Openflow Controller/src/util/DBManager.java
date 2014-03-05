@@ -17,12 +17,12 @@ import java.sql.SQLException;
 public class DBManager {
     Database db = new Database();
     
-    public void InsertSwitch(String dpid,String inetaddress,String software,String hardware,String manufacturer,String serialnum,String datapath, int connectedsince) throws IOException {
-        String sql = "INSERT INTO Switches(dpid,inetaddress,connectedsince,software,hardware,manufacturer,serialnum,datapath) "
-                + "VALUES ('" + dpid + "','" + inetaddress + "','" + connectedsince + "','" + software + "','" + hardware + "','" + manufacturer + "','" + serialnum + "','" + datapath + "')";
+    public void InsertSwitch(int index,String dpid,String inetaddress,String software,String hardware,String manufacturer,String serialnum,String datapath, int connectedsince) throws IOException {
+        String sql = "INSERT INTO Switches(sw_id,dpid,inetaddress,connectedsince,software,hardware,manufacturer,serialnum,datapath) "
+                + "VALUES ('" + index + "','" + dpid + "','" + inetaddress + "','" + connectedsince + "','" + software + "','" + hardware + "','" + manufacturer + "','" + serialnum + "','" + datapath + "')";
         db.Connect();
         db.exec_sql(sql);
-        System.out.println("Insert sucessfull\n");
+        System.out.println("Insert Switch sucessfull\n");
         db.CerrarConexion();
     }
     
@@ -38,15 +38,24 @@ public class DBManager {
         } while(resultado.next());
     }
     
-    public void InsertPort(int index,int portNumber,String name,String hardwareAddress,int state) throws IOException {
-        String sql = "INSERT INTO ports(sw_id,portnumber,sname,hardwareaddress,state) "
-                + "VALUES ('" + index + "','" + portNumber + "','" + name + "','" + hardwareAddress + "','" + state + "')";
+    public void InsertPort(int index,int switchh,int portNumber,String name,String hardwareAddress,int state) throws IOException {
+        String sql = "INSERT INTO ports(port_id,sw_id,portnumber,sname,hardwareaddress,state) "
+                + "VALUES ('" + index + "','" + switchh + "','" + portNumber + "','" + name + "','" + hardwareAddress + "','" + state + "')";
         db.Connect();
         db.exec_sql(sql);
-        System.out.println("Insert sucessfull\n");
+        System.out.println("Insert Port sucessfull\n");
         db.CerrarConexion();
     }
     
+    
+    public void InsertFlow(int index,int switchh,String name,int priority,int inputport,String type, int outport) throws IOException {
+        String sql = "INSERT INTO flows(flow_id,sw_id,name,priority,inputport,type,outport) "
+                + "VALUES ('" + index + "','" + switchh + "','" + name + "','" + priority + "','" + inputport + "','" + type + "','" + outport + "')";
+        db.Connect();
+        db.exec_sql(sql);
+        System.out.println("Insert Flow sucessfull\n");
+        db.CerrarConexion();
+    }
     
     
     
