@@ -22,49 +22,29 @@ public class Overview {
         /* 
          LOGICA PARA SACAR LOS OBJETOS JSON DE CADA SWITCH CONECTADO A FLOODLIGHT
          DE ACUERDO A LA LONGITUD DEL ARREGLO DE SWITCHES SE SACAN EL NUMERO DE SWITCHES
-         QUEDA PENDIENTE GUARDAR ESTOS DATOS EN LA BASE DE DATOS
         */
         DBManager dbm = new DBManager();
         
-        
         for(int i = 0; i < Switches.length(); i++) {
-            String dpid = null,inetAddress = null;
+            String dpid = null,inetAddress = null, software = null,
+                    hardware = null, manufacturer = null, serialNum = null,
+                    datapath = null;
             int connectedSince;
-            
             JSONObject sw = Switches.getJSONObject(i);
+            JSONObject description = sw.getJSONObject("description");
+            JSONArray ports = sw.getJSONArray("ports");
             
             dpid = sw.getString("dpid");
             inetAddress = sw.getString("inetAddress");
-            connectedSince = sw.getInt("connectedSince"); //     REVISAR ESTO?
-            
-            //System.out.println("Information about switch with DPID: " + dpid);
-            //System.out.println("IP Address: " + inetAddress);
-            
-            JSONObject description = sw.getJSONObject("description");
-            String software = null, hardware = null, manufacturer = null,
-                    serialNum = null, datapath = null;
-            
+            connectedSince = sw.getInt("connectedSince");
             software = description.getString("software");
             hardware = description.getString("hardware");
             manufacturer = description.getString("manufacturer");
             serialNum = description.getString("serialNum");
             datapath = description.getString("datapath");
             
-            //System.out.println("");
-            //System.out.println("Software: " + software);
-            //System.out.println("Hardware: " + hardware);
-            //System.out.println("Manufactuer: " + manufacturer);
-            //System.out.println("Serial: " + serialNum);
-            //System.out.println("Datapath: " + datapath);
-            //System.out.println("");     
-            
-            //dbm.Insert(dpid);
             dbm.InsertSwitch(i,dpid,inetAddress,software,hardware,manufacturer,serialNum,datapath,connectedSince);
             
-            
-            
-            JSONArray ports = sw.getJSONArray("ports");
-
             for(int j = 0; j < ports.length(); j++) {
                 int portNumber,state;
                 String name = null, hardwareAddress = null;
@@ -74,20 +54,9 @@ public class Overview {
                 hardwareAddress = port.getString("hardwareAddress");
                 portNumber = port.getInt("portNumber");
                 state = port.getInt("state");
-                
-                //System.out.println("");
-                //System.out.println("Name: " + name);
-                //System.out.println("MAC: " + hardwareAddress);
-                //System.out.println("Port Number: " + portNumber);
-                //System.out.println("State: " + state);
-                
-                //int switchh = dbm.getIndex(dpid);
-                
+          
                 dbm.InsertPort(j,i,portNumber,name,hardwareAddress,state);
             }
-            
-            
-            
         }
     }
     
@@ -95,63 +64,136 @@ public class Overview {
         /* 
          LOGICA PARA SACAR LA LISTA DE SWITCHES QUE CONTIENEN FLUJOS Y LOS FLUJOS
          INSTALADOS EN CADA SWITCH Y SUS VARIABLES PARA LA BASE DE DATOS
-         QUEDA PENDIENTE GUARDAR ESTOS DATOS EN LA BASE DE DATOS
         */
         
-        //se crea un arreglo con los switches conectados para ser recorrido
-        //System.out.println("Lista de switches con flujos: " + Summary.names());
+        //Se crea un arreglo con los switches conectados para ser recorrido
         JSONArray AS = Summary.names();
         
-        for(int i=0; i < Summary.length(); i++){
+        for(int i=0; i < Summary.length(); i++) {
         //se obtiene el objeto json de los flujos que pertenece a cada switch
             JSONObject s = Summary.getJSONObject(AS.getString(i));
         
-        //se crea un arreglo con los nombres de los flujos intalados,para 
+        //se crea un arreglo con los nombres de los flujos intalados, para 
         //ser recorridos en el ciclo.
             JSONArray arr = s.names();
-            for(int j = 0; j < s.length(); j++){
-                int priority, InputPort, version;
+            for(int j = 0; j < s.length(); j++) {
+                int priority, InputPort;
                 
         //se obtiene el objeto json que tiene las caracteristicas del flujo actual
-                JSONObject t = s.getJSONObject(arr.getString(j));
-                
-               //System.out.println("\nCaracteristicas del flujo: " + arr.getString(j));
-                
+                JSONObject t = s.getJSONObject(arr.getString(j)); 
                 priority = t.getInt("priority");
-                //System.out.println("Prioridad: " + priority);
-                
+
                 //se obtiene el objeto json con los match's de los flujos
                 JSONObject match = t.getJSONObject("match");
-                
                 InputPort = match.getInt("inputPort");
-                //System.out.println("Puerto de entrada: " + InputPort);
-                
+
                 //se obtiene el arreglo json con los action's de los flujos
                 JSONArray action = t.getJSONArray("actions");
-                //for(int y = 0; y < action.length(); y++){
-                    int OutputPort;
-                    String accion;
-                    //se obtiene el objeto json con los actions del flujo actual
-                    JSONObject actions = action.getJSONObject(0); // BEFORE y
-                    
-                    OutputPort = actions.getInt("port");
-                    accion = actions.getString("type");
-                    
-                    //System.out.println("Accion a ejecutar: " + accion);
-                    //System.out.println("Puerto a utilizar: " + OutputPort);
-                //}
-                // WE DONT NEED A VERSION
-                //version = t.getInt("version");
-                //System.out.println("Version: " + version);
-               
-                System.out.println(AS.getString(i));
-                // NEW CODE
+                int OutputPort;
+                String accion;
+                //se obtiene el objeto json con los actions del flujo actual
+                JSONObject actions = action.getJSONObject(0);
+                OutputPort = actions.getInt("port");
+                accion = actions.getString("type");
+
+                //System.out.println(AS.getString(i));
                 DBManager dbm = new DBManager();
                 String sname = arr.getString(j);
                 int switchh = dbm.getIndex(AS.getString(i));
-                //dbm.InsertFlow(i, i, sname, priority, InputPort, sname, OutputPort);
                 dbm.InsertFlow(j,i,sname,priority,InputPort,accion,OutputPort);
             }
-        } 
+        }
+    }
+
+    public static void getPortStatistics(JSONObject PortSummary) throws JSONException {
+        JSONArray PortNames;
+        PortNames = PortSummary.names();
+        
+        for(int i = 0; i < PortSummary.length(); i++){
+            //se obtiene el arreglo que contiene las caracteristicas del swich actual
+            JSONArray pri = PortSummary.getJSONArray(PortNames.getString(i));
+            
+            for(int j = 0; j < pri.length(); j++){
+                System.out.println("\n estadisticas generales del swich " + PortNames.getString(i));
+                
+                //se obtiene el objeto JSON con las estadisticas de cada puerto
+                JSONObject pre = pri.getJSONObject(j);
+                int portNumber,receiveBytes,collisions,transmitBytes;
+                int transmitPackets,receivePackets;
+                
+                portNumber = pre.getInt("portNumber");
+                receiveBytes = pre.getInt("receiveBytes");
+                collisions = pre.getInt("collisions");
+                transmitBytes = pre.getInt("transmitBytes");
+                transmitPackets = pre.getInt("transmitPackets");
+                receivePackets = pre.getInt("receivePackets");
+                
+                System.out.println("portNumber: " + portNumber);
+                System.out.println("receiveBytes: " + receiveBytes);
+                System.out.println("collisions: " + collisions);
+                System.out.println("transmitBytes: " + transmitBytes);
+                System.out.println("transmitPackets: " + transmitPackets);
+                System.out.println("receivePackets: " + receivePackets);
+            }
+        }
+    }
+    
+    public static void getFlowStatistics(JSONObject FlowSummary) throws JSONException {
+        JSONArray SFlowNames;
+        //se obtiene el arreglo de equipos que tienen flujos activos
+        SFlowNames = FlowSummary.names();
+
+        for(int i = 0; i < SFlowNames.length(); i++) {
+            //se obtienen las estadisticas de los flujos del switch actual
+            JSONArray FlowStatistics = FlowSummary.getJSONArray(SFlowNames.getString(i));
+            
+            for(int j = 0; j < FlowStatistics.length(); j++) {
+                JSONObject flow,FlowMatch;
+                int packetCount, byteCount, FlowMatchPort,durationSeconds;
+                
+                //se obtiene las estadisticas del flujos actual
+                flow = FlowStatistics.getJSONObject(j);
+                packetCount = flow.getInt("packetCount");
+                byteCount = flow.getInt("byteCount");
+                durationSeconds =flow.getInt("durationSeconds");
+                
+                //las estadisticas floodlight las organiza de acuerdo a como se instalaron
+                //los flujos,asi mismo actualmente se determina a cual flujo pertenece
+                //usando los if.
+                
+                //CUANDO SE INSERTE TODO EN LA DB, ESTA PARTE NO SERA NECESARIA
+                //PORQUE PARA SABER EL FLUJO AL QUE PERTENECE, SOLO SE HARIAN
+                //COMPARACION DE LOS SELECTS DE LA TABLAS FLUJOS Y ESTADISTICAS POR FLUJOS
+                //COMPARANDO INPUTPORT,OUTPUTPORT Y LA ACCION A EJECUTAR
+                if(j==0) {
+                    System.out.println("\n estadisticas especificas del flujo 1");
+                } else {
+                    System.out.println("\n estadisticas especificas del flujo 2");
+                }
+                System.out.println("packetCount: " + packetCount);
+                System.out.println("byteCount: " + byteCount);
+                System.out.println("durationSeconds: " + durationSeconds);
+                
+                FlowMatch = flow.getJSONObject("match");
+                
+                FlowMatchPort = FlowMatch.getInt("inputPort");
+                System.out.println("puerto de entrada: " + FlowMatchPort);
+                
+                JSONArray FlowActions;
+                
+                //se obtiene el arreglos de acciones que tiene el flujo actual
+                FlowActions = flow.getJSONArray("actions");
+                int FlowOutport;
+                String FlowType;
+                JSONObject FActions;
+                    
+                //se obtiene la accion correspondiente al flujo
+                FActions = FlowActions.getJSONObject(0);
+                FlowOutport = FActions.getInt("port");
+                FlowType = FActions.getString("type");
+                System.out.println("accion a ejecutar: " + FlowType);
+                System.out.println("puerto de salida: " + FlowOutport);
+            }
+        }
     }
 }
