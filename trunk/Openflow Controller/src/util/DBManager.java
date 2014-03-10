@@ -18,16 +18,21 @@ public class DBManager {
     Database db = new Database();
     
     public void InsertSwitch(int index,String dpid,String inetaddress,String software,String hardware,String manufacturer,String serialnum,String datapath, int connectedsince) throws IOException {
-        String sql = "INSERT INTO Switches(sw_id,dpid,inetaddress,connectedsince,software,hardware,manufacturer,serialnum,datapath) "
-                + "VALUES ('" + index + "','" + dpid + "','" + inetaddress + "','" + connectedsince + "','" + software + "','" + hardware + "','" + manufacturer + "','" + serialnum + "','" + datapath + "')";
+        //String sql = "INSERT INTO Switches(sw_id,dpid,inetaddress,connectedsince,software,hardware,manufacturer,serialnum,datapath) "
+        //        + "VALUES ('" + index + "','" + dpid + "','" + inetaddress + "','" + connectedsince + "','" + software + "','" + hardware + "','" + manufacturer + "','" + serialnum + "','" + datapath + "')";
+        String sql = "SELECT upsert('" + index + "','" + dpid + "','" + inetaddress + "','" + connectedsince + "','" + software + "','" + hardware + "','" + manufacturer + "','" + serialnum + "','" + datapath + "')";
         db.Connect();
-        db.exec_sql(sql);
+        ResultSet result = db.exec_sel(sql);
+        //db.exec_sql(sql);
         System.out.println("Insert Switch sucessfull\n");
+        //ResultSet resultado = db.exec_sel(sql);
+        //System.out.println(resultado);
         db.CerrarConexion();
     }
     
     public void SelectSwitches() throws SQLException {
         String sql = "SELECT sw_id,dpid,inetaddress,connectedsince,software,hardware,manufacturer,serialnum,datapath FROM Switches";
+        
         db.Connect();
         ResultSet resultado = db.exec_sel(sql);
         db.CerrarConexion();
@@ -39,15 +44,16 @@ public class DBManager {
     }
     
     public void InsertPort(int index,int switchh,int portNumber,String name,String hardwareAddress,int state) throws IOException {
-        String sql = "INSERT INTO ports(port_id,sw_id,portnumber,sname,hardwareaddress,state) "
-                + "VALUES ('" + index + "','" + switchh + "','" + portNumber + "','" + name + "','" + hardwareAddress + "','" + state + "')";
+        // SE MODIFICO LINEA PARA INSERT, AHORA SE HACE CON UN SELECT.
+        //String sql = "INSERT INTO ports(port_id,sw_id,portnumber,sname,hardwareaddress,state) "
+        //        + "VALUES ('" + index + "','" + switchh + "','" + portNumber + "','" + name + "','" + hardwareAddress + "','" + state + "')";
+        String sql = "SELECT upsert('" + index + "','" + switchh + "','" + portNumber + "','" + name + "','" + hardwareAddress + "','" + state + "')";
         db.Connect();
-        db.exec_sql(sql);
+        ResultSet resultado = db.exec_sel(sql);
         System.out.println("Insert Port sucessfull\n");
         db.CerrarConexion();
     }
-    
-    
+
     public void InsertFlow(int index,int switchh,String name,int priority,int inputport,String type, int outport) throws IOException {
         String sql = "INSERT INTO flows(flow_id,sw_id,name,priority,inputport,type,outport) "
                 + "VALUES ('" + index + "','" + switchh + "','" + name + "','" + priority + "','" + inputport + "','" + type + "','" + outport + "')";
@@ -56,9 +62,7 @@ public class DBManager {
         System.out.println("Insert Flow sucessfull\n");
         db.CerrarConexion();
     }
-    
-    
-    
+
     public int getIndex(String dpid) throws SQLException {
         String sql = "SELECT sw_id FROM Switches WHERE dpid='" + dpid + "'";
         db.Connect();
