@@ -35,7 +35,7 @@ import util.Serializer;
  */
 public class test {
     public static void main(String[] args) throws JSONException, IOException, SQLException {
-        String IP = "10.0.0.235";
+        String IP = "10.0.0.249";
         String PORT = "8080";
         FloodlightProvider.setIP(IP);       // Set IP en FloodlightProvider
         FloodlightProvider.setPort(PORT);   // Set PORT en FloodlightProvider
@@ -71,7 +71,7 @@ public class test {
         //Serializer.deleteFlow(del2);
         
         // SACAR TODAS LAS VARIABLES DE LOS SWITCHES CONECTADOS
-        //Overview.getSwitches(Switches);
+        Overview.getSwitches(Switches);
 
         // SACAR TODAS LAS VARIABLES DE LOS FLUJOS ACTIVOS
         JSONObject Summary;

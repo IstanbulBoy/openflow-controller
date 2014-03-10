@@ -54,7 +54,7 @@ public class Database {
         port   = "5432";
         db     = "proyecto";
         usr    = "postgres";
-        pass   = "openflow"; // AJUSTAR PASSWORD 
+        pass   = "fausto89"; // AJUSTAR PASSWORD 
         server = "localhost";
         driver = "org.postgresql.Driver";
         url    = "jdbc:postgresql://" + server + ":" + port + "/" + db;

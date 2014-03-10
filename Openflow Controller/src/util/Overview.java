@@ -43,8 +43,14 @@ public class Overview {
             serialNum = description.getString("serialNum");
             datapath = description.getString("datapath");
             
-            dbm.InsertSwitch(i,dpid,inetAddress,software,hardware,manufacturer,serialNum,datapath,connectedSince);
-            
+            //dbm.InsertSwitch(i,dpid,inetAddress,software,hardware,manufacturer,serialNum,datapath,connectedSince);
+            // LOS UPSERT SE HACEN COMO SI FUERAN UN SELECT. PORQUE SE LLAMA UNA FUNCION EN LA BASE DE DATOS. CODIGO DE PUREBA.
+            dbm.InsertSwitch(0,dpid,inetAddress,software,hardware,manufacturer,"00004","0003",connectedSince);
+            dbm.InsertSwitch(1, "00:00:00:03", inetAddress, software, hardware, manufacturer, serialNum, datapath, connectedSince);
+            dbm.InsertSwitch(2, "00:00:00:04", inetAddress, software, hardware, manufacturer, serialNum, datapath, connectedSince);
+      // SE DEBE CREAR LA FUNCION PARA EL UPSERT DE LOS PUERTOS Y PARA EL UPSERT DE LOS FLUJOS.
+            //LA FUNCION ACTUAL SOLO ES PARA LOS SWITCHES.
+  /*          
             for(int j = 0; j < ports.length(); j++) {
                 int portNumber,state;
                 String name = null, hardwareAddress = null;
@@ -56,8 +62,8 @@ public class Overview {
                 state = port.getInt("state");
           
                 dbm.InsertPort(j,i,portNumber,name,hardwareAddress,state);
-            }
-        }
+            } */
+        } 
     }
     
     public static void getFlows(JSONObject Summary) throws JSONException, SQLException, IOException {
