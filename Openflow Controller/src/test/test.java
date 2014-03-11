@@ -71,7 +71,7 @@ public class test {
         //Serializer.deleteFlow(del2);
         
         // SACAR TODAS LAS VARIABLES DE LOS SWITCHES CONECTADOS
-        Overview.getSwitches(Switches);
+        //Overview.getSwitches(Switches);
 
         // SACAR TODAS LAS VARIABLES DE LOS FLUJOS ACTIVOS
         JSONObject Summary;
@@ -96,6 +96,6 @@ public class test {
         JSONObject FlowSummary;
         FlowSummary = Deserializer.readJsonObjectFromURL("http://" + IP
 				+ ":" + PORT + "/wm/core/switch/all/flow/json  ");
-        //Overview.getFlowStatistics(FlowSummary); 
+        Overview.getFlowStatistics(FlowSummary); 
     }
 }
